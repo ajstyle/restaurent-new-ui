@@ -7,7 +7,19 @@
   /**************************
   DEFAULT BOOTSTRAP STYLES
 **************************/
+.mat-bottom-sheet-container {
+  padding: 8px 16px;
+  
+  box-sizing: border-box;
+  display: block;
+  outline: 0;
+  height: 90vh !important;
+  max-height: 94vh !important; 
+  overflow: auto;
+  border-top-left-radius : 40px !important ; 
+  border-top-right-radius : 40px !important; 
 
+}
 .btn {
   display: inline-block;
   padding: 6px 12px;
@@ -32,7 +44,15 @@
 * {
   margin: 0px;
 }
-  
+.mat-bottom-sheet-container-medium {
+  min-width: 384px;
+  max-width: calc(63vw - 128px) !important;
+}
+
+.mat-bottom-sheet-container-large {
+  min-width: 384px;
+  max-width: calc(50vw - 128px) !important;
+}
 .btn-lg {
   font-size: 18px;
   line-height: 1.33;

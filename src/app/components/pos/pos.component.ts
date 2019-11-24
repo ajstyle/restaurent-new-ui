@@ -4,12 +4,16 @@ import { PosService } from '../../services/pos.service';
 import { ApiService } from '../../services/api.service';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {ModifiersDialogComponent} from '../modifiers-dialog/modifiers-dialog.component';
+import {MatBottomSheet, MatBottomSheetRef} from '@angular/material/bottom-sheet';
+
 import {
   trigger,
   state,
   style,
   animate,
-  transition
+  transition,
+  query,
+  stagger
 } from '@angular/animations';
 @Component({
   selector: 'app-pos',
@@ -27,6 +31,21 @@ import {
       })),
       transition('inactive => active', animate('500ms ease-in')),
       transition('active => inactive', animate('500ms ease-out'))
+    ]) ,
+    trigger('listAnimation', [
+      transition('* => *', [ // each time the binding value changes
+        query(':leave', [
+          stagger(100, [
+            animate('0.5s', style({ opacity: 0 }))
+          ])
+        ], { optional: true }),
+        query(':enter', [
+          style({ opacity: 0 }),
+          stagger(100, [
+            animate('0.5s', style({ opacity: 1 }))
+          ])
+        ], { optional: true })
+      ])
     ])
   ]
 })
@@ -41,7 +60,9 @@ export class PosComponent implements OnInit {
   cartNumItems = 0;
   items;
   selectedItem ; 
-  constructor(private ticketSync: PosService, private db: ApiService, public dialog: MatDialog) { }
+  categories : Array<string> ;
+  constructor(private ticketSync: PosService, private db: ApiService, 
+              public dialog: MatDialog , private bottomSheet: MatBottomSheet) { }
 
   ngOnInit() {
     this.ticketSync.currentTicket.subscribe(data => this.ticket = data  );
@@ -54,15 +75,19 @@ export class PosComponent implements OnInit {
   }
 
   openDialog(item): void {
-    const dialogRef = this.dialog.open(ModifiersDialogComponent, {
-      width: '800px',
-      height : '800px',
-      data : item
-    });
+    // const dialogRef = this.dialog.open(ModifiersDialogComponent, {
+    //   width: '800px',
+    //   height : '800px',
+    //   data : item
+    // });
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-    });
+    // dialogRef.afterClosed().subscribe(result => {
+    //   console.log('The dialog was closed');
+    // });
+    const dialogRef = this.bottomSheet.open(ModifiersDialogComponent , {
+        data : item
+      });
+    
   }
 
 
@@ -83,9 +108,16 @@ export class PosComponent implements OnInit {
   
   selecteItemFunction(item) {
     console.log('item======', item);
-    this.hide = true ; 
+    this.hide = true ;
     this.selectedItem = item ;
+    this.categories = this.selectedItem.category;
+    
+    this.bottomSheet.open(ModifiersDialogComponent , {
+      data : item
+    });
   }
+
+ 
   // Calculate cart total
   calculateTotal() {
     let total = 0;
@@ -107,3 +139,4 @@ export class PosComponent implements OnInit {
 
 
 }
+

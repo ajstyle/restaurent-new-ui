@@ -2,7 +2,7 @@
 
 <div [@displayState]="hide ? 'inactive': 'active'" class = 'p-5'>
   <img src = '../../../assets/macdonald.png' style = 'width : 80px ;' class = 'mb-5'/>
-<h3 style = 'font-weight: bolder; font-size: 33px;'>Hey,</h3>
+<h2 style = 'font-weight: bolder; font-size: 33px;'>Hey,</h2>
 <h3 style = 'font-weight: bolder; font-size: 25px;' class = 'mb-5'>What's ups?</h3>  
 <p  *ngIf = '!hide'(click) = 'back()'> <i class="fa fa-chevron-left" aria-hidden="true"></i>
  &nbsp;&nbsp;  Back</p>
@@ -14,10 +14,11 @@
 
      
       <!-- <div class="col-6 mt-2" *ngFor="let item of type | async"  (click)="addToCheck(item)" > -->
-          <div class = 'd-flex  flex-wrap'>
-        <div  class=" ml-4 mt-3" *ngFor="let item of type | async"    >
+          <div class = 'd-flex  flex-wrap ' [@listAnimation]="type.length" style = 'flex: 1 0 calc(25% - 10px); flex: 1 1 160px;
+          '>
+        <div  class=" ml-4 mt-3"  *ngFor="let item of type | async"    >
 
-          <mat-card class = 'product-card' [ngClass] = "{'selectedItemClass' : selectedItem == item}" (click) = 'selecteItemFunction(item)'  >
+          <mat-card class = 'product-card'  [ngClass] = "{'selectedItemClass' : selectedItem == item}" (click) = 'selecteItemFunction(item)'  >
             <div style = 'display : block;'> 
             <div class="row h-100 justify-content-center align-items-center animated fadeIn">
                   <img class="product" [src]="item.Image"
@@ -67,7 +68,21 @@
 <!-- </div> -->
         <!-- </div> -->
       </div>
+
+    
     </div>
+
+    <div *ngIf = 'categories' >
+    <h3 class ='p-3'> Categories </h3>
+
+    <div class = 'd-flex  flex-wrap ' [@listAnimation]="categories.length">
+   
+   
+      <mat-card  *ngFor = 'let category of categories' >
+        {{category}}
+        </mat-card>
+        </div>
+        </div>
     </mat-tab>
   </mat-tab-group>
 

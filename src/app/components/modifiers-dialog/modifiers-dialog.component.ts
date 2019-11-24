@@ -3,15 +3,62 @@ import { MAT_DIALOG_DATA , MatDialogRef } from '@angular/material';
 import { PosService } from '../../services/pos.service';
 import { ApiService } from '../../services/api.service';
 import { Item, Order, TicketModifier } from '../../item';
-import { forEach } from '@angular/router/src/utils/collection';
+import {MAT_BOTTOM_SHEET_DATA } from '@angular/material/bottom-sheet';
+import {MatBottomSheet, MatBottomSheetRef} from '@angular/material/bottom-sheet';
 
+import {
+  trigger,
+  state,
+  style,
+  animate,
+  transition,
+  query,
+  stagger
+} from '@angular/animations';
 @Component({
   selector: 'app-modifiers-dialog',
   templateUrl: './modifiers-dialog.component.html',
-  styleUrls: ['./modifiers-dialog.component.scss']
+  styleUrls: ['./modifiers-dialog.component.scss'],
+  animations: [
+    trigger('displayState', [
+      state('inactive', style({
+        transform: 'translateY(-40%) scale(0.5)',
+        
+      })),
+      state('active',   style({
+        transform: 'translateY(0%) scale(1)'
+      
+      })),
+      transition('inactive => active', animate('500ms ease-in')),
+      transition('active => inactive', animate('500ms ease-out'))
+    ]) ,
+
+    trigger('scale', [
+      state('scaleIn', style({ transform: 'scale(1)' })),
+      state('scaleOut', style({ transform: 'scale(1.7)' })),
+      transition('scaleIn <=> scaleOut', animate('500ms linear'))
+    ]),
+    trigger('listAnimation', [
+      transition('* => *', [ // each time the binding value changes
+        query(':leave', [
+          stagger(100, [
+            animate('0.5s', style({ opacity: 0 }))
+          ])
+        ], { optional: true }),
+        query(':enter', [
+          style({ opacity: 0 }),
+          stagger(100, [
+            animate('0.5s', style({ opacity: 1 }))
+          ])
+        ], { optional: true })
+      ])
+    ])
+  ]
 })
 export class ModifiersDialogComponent implements OnInit {
+  public scale = 'scaleIn';
 
+  hide = false ; 
   cartTotal = 0;
   cartNumItems = 0;
   ticket: Item[];
@@ -24,19 +71,27 @@ export class ModifiersDialogComponent implements OnInit {
   total = 0;
   step = 0;
   show = true;
-
-
-  constructor(@Inject(MAT_DIALOG_DATA) public data ,
-              public dialogRef: MatDialogRef<ModifiersDialogComponent>,
+  quantity = 1 ;
+  productPrice : number ;
+  disableSubstract = false  ; 
+  // constructor(@Inject(MAT_DIALOG_DATA) public data ,
+  //             public dialogRef: MatDialogRef<ModifiersDialogComponent>,
+  //             private ticketSync: PosService, private db: ApiService) {
+  // }
+ constructor(@Inject(MAT_BOTTOM_SHEET_DATA) public data ,
+ private _bottomSheetRef: MatBottomSheetRef<ModifiersDialogComponent>,
               private ticketSync: PosService, private db: ApiService) {
   }
-
   ngOnInit() {
-    console.log('======', this.data);
+    console.log('======get data', this.data);
+    this.data['quantity'] = 1 ;
+     this.productPrice = this.data.Price
     this.ticketSync.currentTicket.subscribe(data => this.ticket = data);
     this.ticketSync.currentTotal.subscribe(total => this.cartTotal = total);
     this.ticketSync.currentCartNum.subscribe(num => this.cartNumItems);
-    this.ticketSync.currentTicketModifier.subscribe(data => this.ticketModifier = data);
+    this.ticketSync.currentTicketModifier.subscribe(data => {this.ticketModifier = data;
+      console.log('=========',this.ticketModifier );
+     } );
     if (this.data.Modifiers.Deals) {
       this.defaultItemDeals();
     } else {
@@ -44,11 +99,32 @@ export class ModifiersDialogComponent implements OnInit {
     }
     console.log(this.selectedOptions);
     this.totalAfterAddModifier();
+    if( this.data['quantity'] < 1 ) {
+      this.disableSubstract = true ; 
+    }
+  
   }
 
 
+  addItem(){
+    this.data['quantity'] += 1 ;
+     this.productPrice = this.data['quantity'] * this.data.Price;
+    console.log(this.productPrice) ; 
+  }
+
+  subtractItem() {
+    
+  this.data['quantity'] -= 1 ;    
+  this.productPrice = this.data['quantity'] * this.data.Price;
+  
+ }
+
+
+
+
+
   close() {
-    this.dialogRef.close();
+    this._bottomSheetRef.dismiss();
   }
   totalAfterAddModifier() {
     const totalRs = this.selectedOptions.reduce((accumulator, currentValue) => {
@@ -100,6 +176,11 @@ export class ModifiersDialogComponent implements OnInit {
     this.show = !this.show;
   }
 
+  customize(){
+    this.hide = true ; 
+   // this.scale = this.scale === 'scaleIn' ? 'scaleOut' : 'scaleIn';
+
+  }
   onSelection(e, v) {
     this.currentSelected = e.option.value;
     if (this.selectedOptions.includes(e.option.value)) {
@@ -140,7 +221,7 @@ export class ModifiersDialogComponent implements OnInit {
     console.log('cartNumItems', this.cartNumItems);
     this.ticketSync.updateNumItems(this.cartNumItems);
     this.ticketSync.updateTotal(this.cartTotal);
-    this.dialogRef.close();
+    this._bottomSheetRef.dismiss();
   }
 
 }

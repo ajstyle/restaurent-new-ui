@@ -3,8 +3,45 @@
   font-size: 27px;
   bottom: 19px;
   left: 20px;
-  z-index: 46;
-  
+  z-index: 46; 
+}
+
+.buttonCustomize{
+  @extend .buttonDone;
+  background-color:#f8f8f7 !important;
+
+}
+
+.minus-icon {
+  background-color: #f8f8f7;
+    cursor: pointer;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 5px;
+    
+}
+
+
+
+
+.plus-icon {
+  @extend .minus-icon;
+  background-color: #FECA40;
+  margin-left: 15px ;
+
+}
+.buttonDone{
+  border-radius: 30px;
+    padding: 20px;
+    background-color:#FECA40;
+    font-size: 10px;
+}
+
+.icon-times {
+  background-color: #f1f1f1;
+  padding: 17px;
+  position: relative;
+  top: -14px;
 }
 
 .amount {
@@ -50,6 +87,6 @@
     padding: 0px !important;
   }
   img {
-    display : none ; 
+   width : 40% !important
   }
 }

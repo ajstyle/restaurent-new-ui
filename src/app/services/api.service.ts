@@ -140,9 +140,11 @@ export class ApiService {
             ]
           },
           "Name": "Shrimp Tacos",
+          "category" : ['Category1' , 'Category2'],
           "Price": 3.05,
           "Description": "The tacos are made with corn tortillas. The shrimp is grilled and the taco is garnished with onions, cilantro and hot sauce.",
           "Image": "https://i.imgur.com/4ouOeJs.jpg"
+         
         },
         {
           "id" : 2 , 
