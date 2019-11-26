@@ -22,7 +22,7 @@ import {
   animations: [
     trigger('displayState', [
       state('inactive', style({
-        transform: 'translateY(-40%) scale(0.5)',
+        transform: 'translateY(-40%) scale(0.7)',
         
       })),
       state('active',   style({
@@ -32,7 +32,19 @@ import {
       transition('inactive => active', animate('500ms ease-in')),
       transition('active => inactive', animate('500ms ease-out'))
     ]) ,
-
+  
+    trigger('displayMenu', [
+      state('inactive', style({
+        transform: 'translateY(-40%)',
+        
+      })),
+      state('active',   style({
+        transform: 'translateY(0%)'
+      
+      })),
+      transition('inactive => active', animate('500ms ease-in')),
+      transition('active => inactive', animate('500ms ease-out'))
+    ]) ,
     trigger('scale', [
       state('scaleIn', style({ transform: 'scale(1)' })),
       state('scaleOut', style({ transform: 'scale(1.7)' })),
@@ -57,7 +69,8 @@ import {
 })
 export class ModifiersDialogComponent implements OnInit {
   public scale = 'scaleIn';
-
+  showMenu = false ; 
+  showMenuAnimation = false; 
   hide = false ; 
   cartTotal = 0;
   cartNumItems = 0;
@@ -178,6 +191,8 @@ export class ModifiersDialogComponent implements OnInit {
 
   customize(){
     this.hide = true ; 
+    this.showMenu = true ; 
+    this.showMenuAnimation = true ; 
    // this.scale = this.scale === 'scaleIn' ? 'scaleOut' : 'scaleIn';
 
   }
@@ -198,13 +213,15 @@ export class ModifiersDialogComponent implements OnInit {
   }
 
   addModifier() {
-    const obj = JSON.parse(JSON.stringify(this.data));
-    obj.Price = this.totalAmount;
-    obj.selectedModifier = this.selectedOptions;
-    obj.Quantity = 1;
-    this.ticketModifier.push(obj);
-    this.calculateTotal();
-    this.ticketSync.ticketModifiers(this.ticketModifier);
+    this.hide = false ;
+    this.showMenu = false ; 
+    // const obj = JSON.parse(JSON.stringify(this.data));
+    // obj.Price = this.totalAmount;
+    // obj.selectedModifier = this.selectedOptions;
+    // obj.Quantity = 1;
+    // this.ticketModifier.push(obj);
+    // this.calculateTotal();
+    // this.ticketSync.ticketModifiers(this.ticketModifier);
   }
   calculateTotal() {
     let total = 0;
